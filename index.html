@@ -331,8 +331,9 @@ form.sub label{font-weight:700;font-size:14px}
       </div>
       <ol class="timeline reveal">
         <li><span class="when">Degree</span><div class="what"><h3>Finance &amp; Risk Management</h3><p>Assumption University of Thailand</p></div></li>
-        <li><span class="when">[Year]</span><div class="what"><h3>[Internship or work experience]</h3><p class="todo">[Where, and what you analysed or improved]</p></div></li>
-        <li><span class="when">[Year]</span><div class="what"><h3>[Experience or project]</h3><p class="todo">[One line on what you did]</p></div></li>
+        <li><span class="when">2021–24</span><div class="what"><h3>Content Marketing Lead</h3><p>Bona Fide Facilitator Organization. Led a team of writers and set content strategy across digital platforms.</p></div></li>
+        <li><span class="when">2024–25</span><div class="what"><h3>Public Relations, Student Committee</h3><p>Finance &amp; Risk Management, Assumption University. Led the Training and Selection Camp.</p></div></li>
+        <li><span class="when">2025–26</span><div class="what"><h3>Vice President, Student Committee</h3><p>Directed the Finance Gathering, including logistics, budgeting and team responsibilities.</p></div></li>
         <li><span class="when">Next</span><div class="what"><h3>Finance, with a creative edge</h3><p>Looking for roles in financial analysis, advisory and planning.</p></div></li>
       </ol>
     </div>
@@ -380,14 +381,21 @@ form.sub label{font-weight:700;font-size:14px}
           <div class="ln"><span>Assumption University</span><span></span><span>TH</span></div>
         </div>
         <div class="grp"><b>EXPERIENCE</b>
-          <div class="ln"><span>[Role, company]</span><span></span><span>[yr]</span></div>
-          <div class="ln"><span>[Role, company]</span><span></span><span>[yr]</span></div>
+          <div class="ln"><span>Content Marketing Lead</span><span></span><span>21–24</span></div>
         </div>
         <div class="grp"><b>LEADERSHIP</b>
-          <div class="ln"><span>[Club / initiative]</span><span></span><span>[yr]</span></div>
+          <div class="ln"><span>VP, Finance Committee</span><span></span><span>25–26</span></div>
+          <div class="ln"><span>PR, Finance Committee</span><span></span><span>24–25</span></div>
         </div>
         <div class="grp"><b>CERTIFICATIONS</b>
-          <div class="ln"><span>[Certification]</span><span></span><span>[yr]</span></div>
+          <div class="ln"><span>Corporate Finance, IESE</span><span></span><span>✓</span></div>
+          <div class="ln"><span>Financial Planning, AU</span><span></span><span>✓</span></div>
+          <div class="ln"><span>Google Digital Mktg</span><span></span><span>✓</span></div>
+          <div class="ln"><span>AWS Cloud Foundations</span><span></span><span>✓</span></div>
+        </div>
+        <div class="grp"><b>LANGUAGES</b>
+          <div class="ln"><span>Burmese · English</span><span></span><span>fluent</span></div>
+          <div class="ln"><span>Thai · Korean · French</span><span></span><span>learning</span></div>
         </div>
         <div class="tot"><span>TOTAL</span><span>1 × NOVA</span></div>
         <p class="c" style="margin-top:14px">thank you for visiting ♡</p>
@@ -397,10 +405,10 @@ form.sub label{font-weight:700;font-size:14px}
         <h2>Everything on one receipt</h2>
         <p>A quick, readable summary. Download the full PDF for the details.</p>
         <div class="skills">
-          <span class="chip">Financial analysis</span><span class="chip">Valuation</span><span class="chip">Risk</span>
-          <span class="chip">Excel</span><span class="chip">Financial modelling</span><span class="chip">Data visualisation</span><span class="chip">Presentation</span>
+          <span class="chip">Financial analysis</span><span class="chip">DCF &amp; comparables</span><span class="chip">WACC / FCFF</span><span class="chip">M&amp;A analysis</span>
+          <span class="chip">Excel (advanced)</span><span class="chip">Financial modelling</span><span class="chip">Industry research</span><span class="chip">ESG analysis</span><span class="chip">PowerPoint</span>
         </div>
-        <div class="ctas"><button type="button" class="btn btn-pink" data-toast="Your CV PDF goes here once you send it ♡">Download CV (PDF)</button></div>
+        <div class="ctas"><a class="btn btn-pink" href="YaungChiMoMo_CV.pdf" download>Download CV (PDF)</a></div>
       </div>
     </div>
   </section>
@@ -424,7 +432,7 @@ form.sub label{font-weight:700;font-size:14px}
     <div class="wrap">
       <div class="sec-head"><div><span class="eyebrow">Social</span><h2 style="margin-top:10px">Find me around</h2></div></div>
       <div class="stickers reveal">
-        <a class="sticker" href="#social" data-toast="Add your LinkedIn link here">in<small>LinkedIn</small></a>
+        <a class="sticker" href="https://www.linkedin.com/in/yaung-chi-mo-mo-1409111a7/" target="_blank" rel="noopener">in<small>LinkedIn</small></a>
         <a class="sticker" href="#social" data-toast="Add your Instagram link here">◎<small>Instagram</small></a>
         <a class="sticker" href="#social" data-toast="Add your TikTok link here">♪<small>TikTok</small></a>
       </div>
@@ -485,11 +493,9 @@ form.sub label{font-weight:700;font-size:14px}
   <span class="eyebrow" id="dTag"></span>
   <h3 id="dTitle"></h3>
   <dl>
-    <dt>Objective</dt><dd>[What question were you answering?]</dd>
-    <dt>My role</dt><dd>[What you did yourself]</dd>
+    <dt>Objective</dt><dd id="dObj"></dd>
     <dt>Research &amp; method</dt><dd id="dMethod"></dd>
-    <dt>Findings</dt><dd>[Key insight, backed by your numbers]</dd>
-    <dt>Outcome</dt><dd>[What happened next, or what you'd recommend]</dd>
+    <dt>What I did</dt><dd id="dDid"></dd>
   </dl>
 </aside>
 
@@ -518,11 +524,18 @@ form.sub label{font-weight:700;font-size:14px}
 
   // projects
   const projects=[
-    {id:'CF-01',cat:'valuation',tag:'Valuation',title:'[Company] valuation',method:'DCF + comparable companies'},
-    {id:'CF-02',cat:'analysis',tag:'Financial analysis',title:'[Company] ratio deep-dive',method:'Ratio analysis, 3-year trend'},
-    {id:'CF-03',cat:'risk',tag:'Risk management',title:'[Company] risk assessment',method:'Risk register + scenario analysis'},
-    {id:'CF-04',cat:'analysis',tag:'Business analysis',title:'[Business] growth plan',method:'Unit economics + 3-year forecast'},
-    {id:'CF-05',cat:'valuation',tag:'Equity research',title:'[Company] investment pitch',method:'Research report + pitch deck'}
+    {id:'CF-01',cat:'valuation',tag:'Equity valuation',title:'Thai listed companies: PTTOR, OKJ, MAGURO',method:'DCF + comparable companies, 5-year projections',
+      obj:'Estimate intrinsic value and relative market positioning for three Thai listed companies.',
+      did:'Analysed 5 years of financial statements per company, built 5-year projections using macroeconomic and industry conditions, and stress-tested assumptions across scenarios to size risk and return.'},
+    {id:'CF-02',cat:'analysis',tag:'M&A case study',title:'Sun Microsystems & Oracle (buy-side)',method:'Synergy analysis + post-merger performance',
+      obj:'Assess whether a multi-billion-dollar acquisition made sense for the buyer.',
+      did:'Identified the cost synergies and revenue opportunities behind the deal, and projected the integration impact on margins and earnings growth.'},
+    {id:'CF-03',cat:'risk',tag:'Investment valuation',title:'SISB investment valuation',method:'Projections, peer comparison + sensitivity analysis',
+      obj:'Estimate company value and the risks around it.',
+      did:'Analysed performance, revenue growth and key financial indicators, built projections and valuation models, and ran peer comparison and sensitivity analysis.'},
+    {id:'CF-04',cat:'analysis',tag:'Cloud & e-commerce',title:'E-commerce on cloud',method:'AWS hosting + performance monitoring',
+      obj:'Run an e-commerce website on cloud infrastructure.',
+      did:'Deployed and configured AWS services, managed website hosting and monitored system performance.'}
   ];
   function renderProjects(f){
     const list=projects.filter(p=>f==='all'||p.cat===f);
@@ -533,7 +546,7 @@ form.sub label{font-weight:700;font-size:14px}
   renderProjects('all');
 
   let lastFocus;
-  function openDrawer(p){lastFocus=document.activeElement;$('#dTag').textContent=p.tag+' · '+p.id;$('#dTitle').textContent=p.title;$('#dMethod').textContent=p.method;$('#scrim').hidden=false;$('#drawer').hidden=false;$('#dClose').focus();}
+  function openDrawer(p){lastFocus=document.activeElement;$('#dTag').textContent=p.tag+' · '+p.id;$('#dTitle').textContent=p.title;$('#dMethod').textContent=p.method;$('#dObj').textContent=p.obj;$('#dDid').textContent=p.did;$('#scrim').hidden=false;$('#drawer').hidden=false;$('#dClose').focus();}
   function closeDrawer(){$('#scrim').hidden=true;$('#drawer').hidden=true;lastFocus&&lastFocus.focus();}
   $('#dClose').addEventListener('click',closeDrawer);$('#scrim').addEventListener('click',closeDrawer);
   $('#drawer').addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});

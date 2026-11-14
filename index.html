@@ -229,7 +229,6 @@ form.sub label{font-weight:800;font-size:14px}
 .flip .back p{margin:0;font-weight:600}
 
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:12px 20px;border-radius:999px;font-weight:700;font-size:14px;z-index:30;max-width:calc(100% - 32px);text-align:center}
-.demo-tag{font-family:var(--mono);font-size:11px;background:var(--blush);border:1px solid var(--ink);border-radius:999px;padding:2px 8px}
 </style>
 </head>
 <body>
@@ -247,7 +246,6 @@ form.sub label{font-weight:800;font-size:14px}
         <li><a href="#cv">CV</a></li>
         <li><a href="#projects">Projects</a></li>
         <li><a href="#posts">Posts</a></li>
-        <li><a href="#newsletter">Newsletter</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
     </nav>
@@ -262,7 +260,7 @@ form.sub label{font-weight:800;font-size:14px}
     <span class="spark" aria-hidden="true" style="right:3%;bottom:18%;animation-delay:-1s;font-size:14px">♡</span>
     <div class="wrap hero-grid">
       <div>
-        <span class="hello">♡ Hi, I'm Nova <span class="demo-tag">demo</span></span>
+        <span class="hello">♡ Hi, I'm Nova</span>
         <h1 id="headline">Half spreadsheet,<br><em>half sparkle.</em></h1>
         <p class="lede" id="lede">I'm Yaung Chi Mo Mo. I studied Finance and Risk Management, and I love turning numbers into ideas people can actually use.</p>
         <div class="toggle" role="group" aria-label="Which side of Nova">
@@ -422,12 +420,11 @@ form.sub label{font-weight:800;font-size:14px}
         <a class="sticker" href="#social" data-toast="Add your LinkedIn link here">in<small>LinkedIn</small></a>
         <a class="sticker" href="#social" data-toast="Add your Instagram link here">◎<small>Instagram</small></a>
         <a class="sticker" href="#social" data-toast="Add your TikTok link here">♪<small>TikTok</small></a>
-        <a class="sticker" href="#social" data-toast="Add your newsletter link here">✉<small>Substack</small></a>
       </div>
     </div>
   </section>
 
-  <section id="newsletter" style="padding-top:24px">
+  <section id="newsletter" style="padding-top:24px" hidden>
     <div class="wrap">
       <div class="letter reveal">
         <div>

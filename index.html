@@ -249,7 +249,6 @@ form.sub label{font-weight:700;font-size:14px}
       <ul>
         <li><a href="#about">About</a></li>
         <li><a href="#hobbies">Hobbies</a></li>
-        <li><a href="#photos">Photos</a></li>
         <li><a href="#cv">CV</a></li>
         <li><a href="#projects">Projects</a></li>
         <li><a href="#posts">Posts</a></li>
@@ -322,7 +321,7 @@ form.sub label{font-weight:700;font-size:14px}
         <h2 style="margin:10px 0 20px">The story so far</h2>
         <p>I like knowing how a business really works: where the money comes from, what could go wrong, and how to tell that story so people care.</p>
         <p>I analyse, I value companies, and I make the findings easy to understand. Good numbers only matter if people can act on them.</p>
-        <p class="todo">[Add a personal line: a city you love, what you're curious about now]</p>
+        <p>I'm based in Bangkok. Away from the numbers I'm usually journaling, reading or cooking something new.</p>
         <div class="polas" aria-label="Photos of Nova">
           <figure class="pola" style="margin:0"><div class="ph" data-slot="0">[Your photo]</div><figcaption>hi, it's me ♡</figcaption></figure>
           <figure class="pola" style="margin:0"><div class="ph" data-slot="1">[Your photo]</div><figcaption>at work ✎</figcaption></figure>
@@ -346,15 +345,15 @@ form.sub label{font-weight:700;font-size:14px}
         <span class="eyebrow">tap a card to flip ↻</span>
       </div>
       <div class="hobbies">
-        <button type="button" class="flip reveal" aria-pressed="false" style="--r:-1deg"><span class="in"><span class="face front"><span class="ico" aria-hidden="true">✦</span><span><span class="ht">[Hobby one]</span><small>tap to flip</small></span></span><span class="face back"><p>[Why you love it, in one cute line]</p><small style="color:var(--ink)">♡</small></span></span></button>
-        <button type="button" class="flip reveal" aria-pressed="false" style="--r:1deg"><span class="in"><span class="face front"><span class="ico" aria-hidden="true">♡</span><span><span class="ht">[Hobby two]</span><small>tap to flip</small></span></span><span class="face back"><p>[Why you love it, in one cute line]</p><small style="color:var(--ink)">♡</small></span></span></button>
-        <button type="button" class="flip reveal" aria-pressed="false" style="--r:-1deg"><span class="in"><span class="face front"><span class="ico" aria-hidden="true">✎</span><span><span class="ht">[Hobby three]</span><small>tap to flip</small></span></span><span class="face back"><p>[Why you love it, in one cute line]</p><small style="color:var(--ink)">♡</small></span></span></button>
-        <button type="button" class="flip reveal" aria-pressed="false" style="--r:1deg"><span class="in"><span class="face front"><span class="ico" aria-hidden="true">☾</span><span><span class="ht">[Hobby four]</span><small>tap to flip</small></span></span><span class="face back"><p>[Why you love it, in one cute line]</p><small style="color:var(--ink)">♡</small></span></span></button>
+        <button type="button" class="flip reveal" aria-pressed="false" style="--r:-1deg"><span class="in"><span class="face front"><span class="ico" aria-hidden="true">✦</span><span><span class="ht">Journaling</span><small>tap to flip</small></span></span><span class="face back"><p>Writing things down is how I make sense of them.</p><small style="color:var(--ink)">♡</small></span></span></button>
+        <button type="button" class="flip reveal" aria-pressed="false" style="--r:1deg"><span class="in"><span class="face front"><span class="ico" aria-hidden="true">♡</span><span><span class="ht">Reading</span><small>tap to flip</small></span></span><span class="face back"><p>A good book is the best way to see another point of view.</p><small style="color:var(--ink)">♡</small></span></span></button>
+        <button type="button" class="flip reveal" aria-pressed="false" style="--r:-1deg"><span class="in"><span class="face front"><span class="ico" aria-hidden="true">✎</span><span><span class="ht">Cooking</span><small>tap to flip</small></span></span><span class="face back"><p>A recipe is a model too: inputs, method and a result you can taste.</p><small style="color:var(--ink)">♡</small></span></span></button>
+        <button type="button" class="flip reveal" aria-pressed="false" style="--r:1deg"><span class="in"><span class="face front"><span class="ico" aria-hidden="true">☾</span><span><span class="ht">Languages</span><small>tap to flip</small></span></span><span class="face back"><p>Burmese, English, some Thai, and now learning Korean and French.</p><small style="color:var(--ink)">♡</small></span></span></button>
       </div>
     </div>
   </section>
 
-  <section id="photos" style="padding-top:24px">
+  <section id="photos" style="padding-top:24px" hidden>
     <div class="wrap">
       <div class="sec-head">
         <div><span class="eyebrow">Camera roll</span><h2 style="margin-top:10px">Little moments</h2></div>
@@ -420,8 +419,8 @@ form.sub label{font-weight:700;font-size:14px}
         <div class="filters" role="group" aria-label="Filter projects">
           <button type="button" data-f="all" aria-pressed="true">All</button>
           <button type="button" data-f="valuation" aria-pressed="false">Valuation</button>
-          <button type="button" data-f="analysis" aria-pressed="false">Analysis</button>
-          <button type="button" data-f="risk" aria-pressed="false">Risk</button>
+          <button type="button" data-f="ma" aria-pressed="false">M&amp;A</button>
+          <button type="button" data-f="cloud" aria-pressed="false">Cloud</button>
         </div>
       </div>
       <div class="notes reveal" id="notes"></div>
@@ -527,13 +526,13 @@ form.sub label{font-weight:700;font-size:14px}
     {id:'CF-01',cat:'valuation',tag:'Equity valuation',title:'Thai listed companies: PTTOR, OKJ, MAGURO',method:'DCF + comparable companies, 5-year projections',
       obj:'Estimate intrinsic value and relative market positioning for three Thai listed companies.',
       did:'Analysed 5 years of financial statements per company, built 5-year projections using macroeconomic and industry conditions, and stress-tested assumptions across scenarios to size risk and return.'},
-    {id:'CF-02',cat:'analysis',tag:'M&A case study',title:'Sun Microsystems & Oracle (buy-side)',method:'Synergy analysis + post-merger performance',
+    {id:'CF-02',cat:'ma',tag:'M&A case study',title:'Sun Microsystems & Oracle (buy-side)',method:'Synergy analysis + post-merger performance',
       obj:'Assess whether a multi-billion-dollar acquisition made sense for the buyer.',
       did:'Identified the cost synergies and revenue opportunities behind the deal, and projected the integration impact on margins and earnings growth.'},
-    {id:'CF-03',cat:'risk',tag:'Investment valuation',title:'SISB investment valuation',method:'Projections, peer comparison + sensitivity analysis',
+    {id:'CF-03',cat:'valuation',tag:'Investment valuation',title:'SISB investment valuation',method:'Projections, peer comparison + sensitivity analysis',
       obj:'Estimate company value and the risks around it.',
       did:'Analysed performance, revenue growth and key financial indicators, built projections and valuation models, and ran peer comparison and sensitivity analysis.'},
-    {id:'CF-04',cat:'analysis',tag:'Cloud & e-commerce',title:'E-commerce on cloud',method:'AWS hosting + performance monitoring',
+    {id:'CF-04',cat:'cloud',tag:'Cloud & e-commerce',title:'E-commerce on cloud',method:'AWS hosting + performance monitoring',
       obj:'Run an e-commerce website on cloud infrastructure.',
       did:'Deployed and configured AWS services, managed website hosting and monitored system performance.'}
   ];

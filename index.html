@@ -229,6 +229,13 @@ form.sub label{font-weight:800;font-size:14px}
 .flip .back p{margin:0;font-weight:600}
 
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:12px 20px;border-radius:999px;font-weight:700;font-size:14px;z-index:30;max-width:calc(100% - 32px);text-align:center}
+
+/* page transition: curtain wipe, then the section rises in */
+.curtain{position:fixed;inset:0;z-index:50;background:var(--ink);transform:translateY(100%);pointer-events:none}
+.curtain.cover{transform:translateY(0);transition:transform .38s cubic-bezier(.7,0,.3,1)}
+.curtain.leave{transform:translateY(-100%);transition:transform .42s cubic-bezier(.7,0,.3,1)}
+.entering>.wrap{animation:enter .55s cubic-bezier(.2,.7,.2,1) both}
+@keyframes enter{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -601,6 +608,34 @@ form.sub label{font-weight:800;font-size:14px}
     });
     toast(files.length+' photo'+(files.length>1?'s':'')+' added to the preview ♡');
   });
+
+  // page transition for in-page links
+  const curtain=document.createElement('div');
+  curtain.className='curtain';curtain.setAttribute('aria-hidden','true');
+  document.body.appendChild(curtain);
+  let busy=false;
+  function arrive(el){
+    const box=el.id==='home'?el.querySelector('section'):el;
+    box.classList.remove('entering');void box.offsetWidth;box.classList.add('entering');
+    setTimeout(()=>box.classList.remove('entering'),700);
+  }
+  function go(el,hash){
+    history.pushState(null,'',hash);
+    if(calm){el.scrollIntoView({block:'start'});return;}
+    busy=true;curtain.className='curtain cover';
+    setTimeout(()=>{
+      el.scrollIntoView({behavior:'instant',block:'start'});
+      arrive(el);
+      curtain.className='curtain leave';
+      setTimeout(()=>{curtain.className='curtain';busy=false;},450);
+    },400);
+  }
+  $$('a[href^="#"]:not([data-toast])').forEach(a=>a.addEventListener('click',e=>{
+    const hash=a.getAttribute('href'),el=document.getElementById(hash.slice(1));
+    if(!el)return;
+    e.preventDefault();
+    if(!busy)go(el,hash);
+  }));
 })();
 </script>
 </body>

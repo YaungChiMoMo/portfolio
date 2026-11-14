@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nova's Little Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Figtree:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a cute double-entry ledger — every section balances a "numbers" side with a "sparkle" side */
+:root{
+  --bone:#F7EFE3; --blush:#FFD9E8; --candy:#FF6FAE; --rouge:#A8145A;
+  --ink:#1C1518; --cocoa:#6A5559; --paper:#FFFBF5; --line:#E6D7C6;
+  --display:'Bagel Fat One', 'Arial Rounded MT Bold', system-ui, sans-serif;
+  --body:'Figtree', system-ui, -apple-system, sans-serif;
+  --mono:'DM Mono', ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{background:var(--bone);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bone)}
+a{color:var(--rouge)}
+:focus-visible{outline:3px solid var(--candy);outline-offset:3px;border-radius:8px}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{text-wrap:balance;margin:0}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(36px,6vw,56px);line-height:1}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--cocoa)}
+section{padding-block:72px}
+.sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:12px;margin-bottom:28px}
+
+/* header */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bone);border-bottom:2px dashed var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px}
+.logo{font-family:var(--display);font-size:24px;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:8px}
+nav ul{list-style:none;margin:0;padding:0;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav a{display:inline-flex;align-items:center;min-height:40px;padding:0 12px;border-radius:999px;text-decoration:none;color:var(--ink);font-weight:600;font-size:14px;white-space:nowrap}
+nav a:hover{background:var(--blush)}
+@media (max-width:760px){.bar{flex-wrap:wrap}nav{width:100%}}
+
+/* hero */
+.hero{padding-block:48px 64px}
+.hero-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:28px;align-items:stretch}
+@media (max-width:820px){.hero-grid{grid-template-columns:1fr}}
+.hello{display:inline-flex;align-items:center;gap:8px;background:var(--paper);border:2px solid var(--ink);border-radius:999px;padding:6px 14px;font-weight:700;font-size:14px;transform:rotate(-2deg)}
+.hero h1{font-family:var(--display);font-weight:400;font-size:clamp(48px,8.5vw,96px);line-height:.95;margin-top:20px}
+.hero h1 em{font-style:normal;color:var(--candy);-webkit-text-stroke:2px var(--ink);paint-order:stroke fill}
+.hero p.lede{font-size:19px;max-width:30em;color:var(--cocoa);margin:20px 0 0}
+.toggle{display:inline-flex;margin-top:24px;background:var(--paper);border:2px solid var(--ink);border-radius:999px;padding:4px;gap:4px}
+.toggle button{border:0;background:transparent;font:inherit;font-weight:700;font-size:14px;min-height:40px;padding:0 16px;border-radius:999px;cursor:pointer;color:var(--ink)}
+.toggle button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:50px;padding:0 24px;border-radius:999px;font-weight:800;text-decoration:none;border:2px solid var(--ink);cursor:pointer;font:inherit;font-weight:800;font-size:16px;transition:transform .15s ease,box-shadow .15s ease}
+.btn-pink{background:var(--candy);color:var(--ink);box-shadow:4px 4px 0 var(--ink)}
+.btn-pink:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.btn-ghost{background:transparent;color:var(--ink)}
+.btn-ghost:hover{background:var(--paper)}
+
+/* ledger card */
+.ledger{background:var(--paper);border:2px solid var(--ink);border-radius:20px;box-shadow:6px 6px 0 var(--ink);padding:24px;position:relative;display:flex;flex-direction:column;gap:14px}
+.ledger .cols{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:2px solid var(--ink)}
+.ledger .col{padding:12px 10px;display:flex;flex-direction:column;gap:8px;font-family:var(--mono);font-size:13px}
+.ledger .col+.col{border-left:2px solid var(--ink)}
+.ledger .col b{font-family:var(--body);font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+.ledger .item{display:flex;justify-content:space-between;gap:6px;border-bottom:1px dotted var(--line);padding-bottom:6px;transition:opacity .3s ease}
+.ledger .item.dim{opacity:.3}
+.ledger .total{display:flex;justify-content:space-between;align-items:center;background:var(--blush);border-radius:12px;padding:10px 14px;font-family:var(--mono);font-weight:500}
+.star{position:absolute;top:-34px;right:-12px;width:92px;height:92px;animation:bob 3.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-8px) rotate(6deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+
+/* marquee */
+.ribbon{background:var(--ink);color:var(--blush);overflow:hidden;border-block:2px solid var(--ink)}
+.ribbon div{display:flex;gap:32px;white-space:nowrap;padding-block:12px;font-family:var(--display);font-size:22px;width:max-content;animation:slide 28s linear infinite}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+/* about */
+.about-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:32px}
+@media (max-width:820px){.about-grid{grid-template-columns:1fr}}
+.about-grid p{margin:0 0 14px;max-width:34em}
+.timeline{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px;position:relative}
+.timeline li{display:grid;grid-template-columns:92px 1fr;gap:14px;align-items:start}
+.when{font-family:var(--mono);font-size:13px;background:var(--blush);border-radius:999px;padding:6px 10px;text-align:center;font-weight:500}
+.what{background:var(--paper);border:2px solid var(--ink);border-radius:16px;padding:14px 16px}
+.what h3{font-size:17px}
+.what p{margin:4px 0 0;color:var(--cocoa);font-size:15px}
+.todo{color:var(--rouge);font-family:var(--mono);font-size:13px}
+
+/* receipt CV */
+.cv-grid{display:grid;grid-template-columns:minmax(0,420px) 1fr;gap:32px;align-items:start}
+@media (max-width:820px){.cv-grid{grid-template-columns:1fr}}
+.receipt{background:var(--paper);padding:28px 24px 36px;font-family:var(--mono);font-size:14px;position:relative;filter:drop-shadow(4px 6px 0 rgba(28,21,24,.12));
+  -webkit-mask:radial-gradient(circle 8px at 50% 100%,transparent 98%,#000) 0 0/22px 100% repeat-x;mask:radial-gradient(circle 8px at bottom,transparent 98%,#000) 0 0/22px 100% repeat-x}
+.receipt h3{font-family:var(--display);font-weight:400;font-size:28px;text-align:center}
+.receipt .c{text-align:center;color:var(--cocoa);font-size:12px;margin:4px 0 16px}
+.receipt .grp{border-top:2px dashed var(--line);padding-top:10px;margin-top:10px}
+.receipt .grp b{display:block;font-size:12px;letter-spacing:.12em;margin-bottom:6px;color:var(--rouge)}
+.receipt .ln{display:flex;gap:6px}
+.receipt .ln span:nth-child(2){flex:1;border-bottom:1px dotted var(--cocoa);transform:translateY(-5px)}
+.receipt .tot{display:flex;justify-content:space-between;font-weight:500;font-size:16px;border-top:2px solid var(--ink);margin-top:14px;padding-top:10px}
+.cv-side{display:flex;flex-direction:column;gap:16px}
+.cv-side p{margin:0;max-width:32em;color:var(--cocoa)}
+.skills{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;border:2px solid var(--ink);background:var(--paper);font-weight:700;font-size:14px}
+
+/* projects */
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.filters button{min-height:40px;padding:0 16px;border-radius:999px;border:2px solid var(--ink);background:var(--paper);font:inherit;font-weight:700;font-size:14px;cursor:pointer;color:var(--ink)}
+.filters button[aria-pressed="true"]{background:var(--candy)}
+.notes{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}
+.note{background:var(--paper);border:2px solid var(--ink);border-radius:6px 6px 22px 6px;padding:20px;display:flex;flex-direction:column;gap:12px;min-height:250px;cursor:pointer;text-align:left;font:inherit;color:var(--ink);transition:transform .2s ease}
+.note:nth-child(3n+1){background:var(--blush);transform:rotate(-1.2deg)}
+.note:nth-child(3n+2){transform:rotate(.8deg)}
+.note:hover{transform:rotate(0) translateY(-4px)}
+.note .tag{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.1em;display:flex;justify-content:space-between}
+.note h3{font-family:var(--display);font-weight:400;font-size:26px;line-height:1.05}
+.note .more{margin-top:auto;font-weight:800;font-size:14px}
+.empty{grid-column:1/-1;text-align:center;padding:32px;border:2px dashed var(--cocoa);border-radius:16px;color:var(--cocoa)}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(28,21,24,.45);z-index:20}
+.drawer{position:fixed;z-index:21;right:0;top:0;bottom:0;width:min(480px,100%);background:var(--bone);border-left:2px solid var(--ink);padding:calc(24px + env(safe-area-inset-top,0px)) max(24px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) 24px;overflow-y:auto;display:flex;flex-direction:column;gap:16px}
+.drawer h3{font-family:var(--display);font-weight:400;font-size:34px;line-height:1}
+.drawer dl{margin:0;display:flex;flex-direction:column;gap:10px}
+.drawer dt{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--rouge)}
+.drawer dd{margin:0;background:var(--paper);border:2px solid var(--ink);border-radius:12px;padding:12px 14px;color:var(--cocoa)}
+.x{align-self:flex-end;width:44px;height:44px;border-radius:50%;border:2px solid var(--ink);background:var(--paper);font-size:20px;cursor:pointer}
+
+/* socials */
+.stickers{display:flex;flex-wrap:wrap;gap:16px}
+.sticker{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:132px;height:132px;border-radius:50%;border:2px solid var(--ink);background:var(--paper);text-decoration:none;color:var(--ink);font-weight:800;box-shadow:4px 4px 0 var(--ink);transition:transform .2s ease}
+.sticker:nth-child(even){background:var(--blush)}
+.sticker:hover{transform:rotate(-8deg) scale(1.05)}
+.sticker small{font-family:var(--mono);font-weight:400;font-size:11px;color:var(--cocoa)}
+
+/* newsletter */
+.letter{background:var(--candy);border:2px solid var(--ink);border-radius:28px;box-shadow:8px 8px 0 var(--ink);padding:36px clamp(20px,4vw,48px);display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:center}
+@media (max-width:820px){.letter{grid-template-columns:1fr}}
+.letter h2 span{display:block;font-size:.55em;margin-top:6px}
+.letter p{margin:12px 0 0;max-width:30em}
+.topics{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.topics span{background:var(--paper);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700}
+form.sub{display:flex;flex-direction:column;gap:10px}
+form.sub label{font-weight:800;font-size:14px}
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.row input{flex:1 1 200px;min-width:0;min-height:52px;border-radius:999px;border:2px solid var(--ink);background:var(--paper);padding:0 18px;font:inherit;color:var(--ink)}
+.row .btn{background:var(--ink);color:var(--paper)}
+.msg{font-size:14px;font-weight:700;min-height:1.4em;margin:0}
+
+/* posts */
+.posts{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+.post{border-top:3px solid var(--ink);padding-top:14px;display:flex;flex-direction:column;gap:8px}
+.post .meta{display:flex;gap:8px;align-items:center;font-family:var(--mono);font-size:12px;color:var(--cocoa)}
+.post .meta b{background:var(--blush);color:var(--ink);border-radius:999px;padding:2px 10px;font-weight:500}
+.post h3{font-size:22px;line-height:1.2}
+.post p{margin:0;color:var(--cocoa)}
+
+/* contact */
+.contact{background:var(--ink);color:var(--bone);padding-block:80px 32px}
+.contact h2{font-size:clamp(48px,10vw,120px);color:var(--bone)}
+.contact h2 em{font-style:normal;color:var(--candy)}
+.contact p{max-width:32em;color:#D8C9BC;margin:16px 0 0}
+.mail{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:28px}
+.mail code{font-family:var(--mono);font-size:18px;background:#2C2226;border-radius:999px;padding:12px 20px;color:var(--bone);user-select:all}
+.mail button{min-height:48px;padding:0 20px;border-radius:999px;border:2px solid var(--candy);background:transparent;color:var(--candy);font:inherit;font-weight:800;cursor:pointer}
+.links{display:flex;flex-wrap:wrap;gap:12px 28px;margin-top:28px}
+.links a{color:var(--blush);font-weight:700}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;margin-top:64px;padding-top:18px;border-top:1px dashed #4A3B40;font-family:var(--mono);font-size:12px;color:#BFAFA4}
+
+/* ---- animation ---- */
+@keyframes pop{from{opacity:0;transform:translateY(18px) scale(.96)}to{opacity:1;transform:none}}
+.hero .hello{animation:pop .6s .05s both, wiggle 4s 1.2s ease-in-out infinite}
+.hero h1{animation:pop .7s .15s both}
+.hero .lede{animation:pop .7s .3s both}
+.hero .toggle,.hero .ctas{animation:pop .7s .45s both}
+.hero .ledger{animation:pop .8s .35s both}
+@keyframes wiggle{0%,90%,100%{transform:rotate(-2deg)}93%{transform:rotate(3deg)}96%{transform:rotate(-4deg)}}
+.hero h1.swap{animation:pop .45s both}
+.hero{position:relative;overflow:hidden}
+.spark{position:absolute;pointer-events:none;color:var(--candy);font-size:18px;animation:float 6s ease-in-out infinite;opacity:.8}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-14px) rotate(25deg)}}
+.star{cursor:pointer}
+.star.spin{animation:spin .8s cubic-bezier(.3,1.5,.5,1)}
+@keyframes spin{to{transform:rotate(360deg) scale(1.1)}}
+.heart{position:fixed;pointer-events:none;z-index:40;font-size:18px;color:var(--candy);animation:burst 1s ease-out forwards}
+@keyframes burst{to{transform:translate(var(--dx),var(--dy)) scale(.4);opacity:0}}
+.trail{position:fixed;pointer-events:none;z-index:40;color:var(--candy);font-size:12px;animation:fade .8s ease-out forwards}
+@keyframes fade{to{transform:translateY(16px) scale(.3);opacity:0}}
+@supports (animation-timeline: view()){
+  .reveal{animation:rise linear both;animation-timeline:view();animation-range:entry 0% entry 45%}
+  @keyframes rise{from{transform:translateY(40px) rotate(var(--r,0deg));opacity:.25}to{transform:rotate(var(--r,0deg));opacity:1}}
+}
+
+/* ---- photos ---- */
+.polas{position:relative;min-height:300px;margin-top:8px}
+.pola{position:absolute;width:min(200px,46%);background:var(--paper);border:2px solid var(--ink);padding:10px 10px 36px;box-shadow:4px 4px 0 var(--ink);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}
+.pola:nth-child(1){left:0;top:10px;transform:rotate(-7deg)}
+.pola:nth-child(2){left:30%;top:0;transform:rotate(4deg);z-index:2}
+.pola:nth-child(3){left:54%;top:40px;transform:rotate(-2deg)}
+.pola:hover{transform:rotate(0) translateY(-10px) scale(1.04);z-index:3}
+.ph{aspect-ratio:4/5;max-width:100%;background:repeating-linear-gradient(45deg,var(--blush) 0 10px,var(--paper) 10px 20px);display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--mono);font-size:11px;color:var(--cocoa);overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.pola figcaption{position:absolute;left:0;right:0;bottom:8px;text-align:center;font-family:var(--display);font-size:15px}
+.roll{display:flex;gap:18px;overflow-x:auto;padding:10px 4px 24px;scroll-snap-type:x mandatory}
+.roll .pola{position:relative;flex:0 0 200px;width:200px;left:auto;top:auto;scroll-snap-align:start}
+.roll .pola:nth-child(odd){transform:rotate(-3deg)}
+.roll .pola:nth-child(even){transform:rotate(3deg)}
+.roll .pola:hover{transform:rotate(0) translateY(-10px)}
+.upl{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border-radius:999px;border:2px dashed var(--ink);background:var(--paper);font-weight:800;font-size:14px;cursor:pointer}
+.upl input{position:absolute;width:1px;height:1px;opacity:0}
+.upl:focus-within{outline:3px solid var(--candy);outline-offset:3px}
+
+/* ---- hobbies ---- */
+.hobbies{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px}
+.flip{perspective:900px;min-height:210px;border:0;padding:0;background:none;cursor:pointer;font:inherit;color:var(--ink);text-align:left}
+.flip .in{position:relative;width:100%;height:100%;min-height:210px;transition:transform .6s cubic-bezier(.3,1.3,.5,1);transform-style:preserve-3d}
+.flip[aria-pressed="true"] .in{transform:rotateY(180deg)}
+.flip .face{position:absolute;inset:0;backface-visibility:hidden;border:2px solid var(--ink);border-radius:22px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:4px 4px 0 var(--ink)}
+.flip .front{background:var(--paper)}
+.flip:nth-child(even) .front{background:var(--blush)}
+.flip .back{background:var(--candy);transform:rotateY(180deg)}
+.flip .ico{font-size:40px;line-height:1;display:inline-block;animation:float 4s ease-in-out infinite}
+.flip:nth-child(2) .ico{animation-delay:-1s}.flip:nth-child(3) .ico{animation-delay:-2s}.flip:nth-child(4) .ico{animation-delay:-3s}
+.flip .ht{display:block;font-family:var(--display);font-weight:400;font-size:24px;line-height:1.1}
+.flip small{font-family:var(--mono);font-size:12px;color:var(--cocoa)}
+.flip .back p{margin:0;font-weight:600}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:12px 20px;border-radius:999px;font-weight:700;font-size:14px;z-index:30;max-width:calc(100% - 32px);text-align:center}
+.demo-tag{font-family:var(--mono);font-size:11px;background:var(--blush);border:1px solid var(--ink);border-radius:999px;padding:2px 8px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap bar">
+    <a class="logo" href="#home" aria-label="Nova, home">
+      <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5l2.6 6.9 7.4.4-5.8 4.6 2 7.1L12 16.4l-6.2 4.1 2-7.1L2 8.8l7.4-.4z" fill="#FF6FAE" stroke="#1C1518" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      Nova
+    </a>
+    <nav aria-label="Main">
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#hobbies">Hobbies</a></li>
+        <li><a href="#photos">Photos</a></li>
+        <li><a href="#cv">CV</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#posts">Posts</a></li>
+        <li><a href="#newsletter">Newsletter</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="home">
+  <section class="hero">
+    <span class="spark" aria-hidden="true" style="left:4%;top:14%">✦</span>
+    <span class="spark" aria-hidden="true" style="left:46%;top:8%;animation-delay:-2s;font-size:13px">♡</span>
+    <span class="spark" aria-hidden="true" style="left:52%;bottom:10%;animation-delay:-4s">✦</span>
+    <span class="spark" aria-hidden="true" style="right:3%;bottom:18%;animation-delay:-1s;font-size:14px">♡</span>
+    <div class="wrap hero-grid">
+      <div>
+        <span class="hello">♡ Hi, I'm Nova <span class="demo-tag">demo</span></span>
+        <h1 id="headline">Half spreadsheet,<br><em>half sparkle.</em></h1>
+        <p class="lede" id="lede">I'm Yaung Chi Mo Mo. I studied Finance and Risk Management, and I love turning numbers into ideas people can actually use.</p>
+        <div class="toggle" role="group" aria-label="Which side of Nova">
+          <button type="button" data-mode="numbers" aria-pressed="false">✎ Numbers</button>
+          <button type="button" data-mode="both" aria-pressed="true">✦ Both</button>
+          <button type="button" data-mode="sparkle" aria-pressed="false">♡ Sparkle</button>
+        </div>
+        <div class="ctas">
+          <a class="btn btn-pink" href="#projects">See my projects →</a>
+          <a class="btn btn-ghost" href="#cv">Peek at my CV</a>
+        </div>
+      </div>
+
+      <aside class="ledger" aria-label="Nova's ledger">
+        <svg class="star" viewBox="0 0 100 100" aria-hidden="true">
+          <path d="M50 6l12 28 30 2-23 19 8 30-27-16-27 16 8-30L8 36l30-2z" fill="#FF6FAE" stroke="#1C1518" stroke-width="3.5" stroke-linejoin="round"/>
+          <circle cx="40" cy="48" r="3.4" fill="#1C1518"/><circle cx="60" cy="48" r="3.4" fill="#1C1518"/>
+          <path d="M43 57q7 6 14 0" fill="none" stroke="#1C1518" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="34" cy="56" r="4" fill="#FFD9E8"/><circle cx="66" cy="56" r="4" fill="#FFD9E8"/>
+        </svg>
+        <span class="eyebrow">My little ledger · FY 2026</span>
+        <div class="cols">
+          <div class="col" id="colNum">
+            <b>Numbers ✎</b>
+            <span class="item"><span>Financial analysis</span><span>✓</span></span>
+            <span class="item"><span>Valuation</span><span>✓</span></span>
+            <span class="item"><span>Risk management</span><span>✓</span></span>
+            <span class="item"><span>Business</span><span>✓</span></span>
+          </div>
+          <div class="col" id="colSpark">
+            <b>Sparkle ♡</b>
+            <span class="item"><span>Modern marketing</span><span>✓</span></span>
+            <span class="item"><span>Digital commerce</span><span>✓</span></span>
+            <span class="item"><span>Content creation</span><span>✓</span></span>
+            <span class="item"><span>Creative projects</span><span>✓</span></span>
+          </div>
+        </div>
+        <div class="total"><span>Balance</span><span id="bal">Perfectly even ✦</span></div>
+      </aside>
+    </div>
+  </section>
+
+  <div class="ribbon" aria-hidden="true"><div>
+    <span>✦ finance</span><span>♡ marketing</span><span>✎ valuation</span><span>✦ content</span><span>♡ commerce</span><span>✎ risk</span><span>✦ ideas</span>
+    <span>✦ finance</span><span>♡ marketing</span><span>✎ valuation</span><span>✦ content</span><span>♡ commerce</span><span>✎ risk</span><span>✦ ideas</span>
+  </div></div>
+
+  <section id="about">
+    <div class="wrap about-grid">
+      <div>
+        <span class="eyebrow">About me</span>
+        <h2 style="margin:10px 0 20px">The story so far</h2>
+        <p>I like knowing how a business really works: where the money comes from, what could go wrong, and how to tell that story so people care.</p>
+        <p>So I don't pick one lane. I analyse, I value companies, I create content, and I keep exploring.</p>
+        <p class="todo">[Add a personal line: a city you love, what you're curious about now]</p>
+        <div class="polas" aria-label="Photos of Nova">
+          <figure class="pola" style="margin:0"><div class="ph" data-slot="0">[Your photo]</div><figcaption>hi, it's me ♡</figcaption></figure>
+          <figure class="pola" style="margin:0"><div class="ph" data-slot="1">[Your photo]</div><figcaption>at work ✎</figcaption></figure>
+          <figure class="pola" style="margin:0"><div class="ph" data-slot="2">[Your photo]</div><figcaption>off duty ✦</figcaption></figure>
+        </div>
+      </div>
+      <ol class="timeline reveal">
+        <li><span class="when">Degree</span><div class="what"><h3>Finance &amp; Risk Management</h3><p>Assumption University of Thailand</p></div></li>
+        <li><span class="when">[Year]</span><div class="what"><h3>Content marketing &amp; digital work</h3><p class="todo">[Where, and what you made]</p></div></li>
+        <li><span class="when">[Year]</span><div class="what"><h3>[Experience or project]</h3><p class="todo">[One line on what you did]</p></div></li>
+        <li><span class="when">Next</span><div class="what"><h3>Finance + creativity, together</h3><p>Looking for roles in analysis, advisory and planning.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="hobbies" style="padding-top:24px">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="eyebrow">Off the spreadsheet</span><h2 style="margin-top:10px">Things I love</h2></div>
+        <span class="eyebrow">tap a card to flip ↻</span>
+      </div>
+      <div class="hobbies">
+        <button type="button" class="flip reveal" aria-pressed="false" style="--r:-1deg"><span class="in"><span class="face front"><span class="ico" aria-hidden="true">✦</span><span><span class="ht">[Hobby one]</span><small>tap to flip</small></span></span><span class="face back"><p>[Why you love it, in one cute line]</p><small style="color:var(--ink)">♡</small></span></span></button>
+        <button type="button" class="flip reveal" aria-pressed="false" style="--r:1deg"><span class="in"><span class="face front"><span class="ico" aria-hidden="true">♡</span><span><span class="ht">[Hobby two]</span><small>tap to flip</small></span></span><span class="face back"><p>[Why you love it, in one cute line]</p><small style="color:var(--ink)">♡</small></span></span></button>
+        <button type="button" class="flip reveal" aria-pressed="false" style="--r:-1deg"><span class="in"><span class="face front"><span class="ico" aria-hidden="true">✎</span><span><span class="ht">[Hobby three]</span><small>tap to flip</small></span></span><span class="face back"><p>[Why you love it, in one cute line]</p><small style="color:var(--ink)">♡</small></span></span></button>
+        <button type="button" class="flip reveal" aria-pressed="false" style="--r:1deg"><span class="in"><span class="face front"><span class="ico" aria-hidden="true">☾</span><span><span class="ht">[Hobby four]</span><small>tap to flip</small></span></span><span class="face back"><p>[Why you love it, in one cute line]</p><small style="color:var(--ink)">♡</small></span></span></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="photos" style="padding-top:24px">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="eyebrow">Camera roll</span><h2 style="margin-top:10px">Little moments</h2></div>
+        <label class="upl">＋ Try your photos<input type="file" id="photoIn" accept="image/*" multiple></label>
+      </div>
+      <div class="roll" id="roll" aria-label="Photo gallery">
+        <figure class="pola" style="margin:0"><div class="ph">[Photo]</div><figcaption>[caption]</figcaption></figure>
+        <figure class="pola" style="margin:0"><div class="ph">[Photo]</div><figcaption>[caption]</figcaption></figure>
+        <figure class="pola" style="margin:0"><div class="ph">[Photo]</div><figcaption>[caption]</figcaption></figure>
+        <figure class="pola" style="margin:0"><div class="ph">[Photo]</div><figcaption>[caption]</figcaption></figure>
+        <figure class="pola" style="margin:0"><div class="ph">[Photo]</div><figcaption>[caption]</figcaption></figure>
+      </div>
+      <p class="eyebrow" style="margin:4px 0 0">Preview only: photos you pick stay on your phone. Send them to me to add them for real.</p>
+    </div>
+  </section>
+
+  <section id="cv" style="background:var(--paper);border-block:2px dashed var(--line)">
+    <div class="wrap cv-grid">
+      <div class="receipt reveal" style="--r:-1.5deg" aria-label="CV summary">
+        <h3>Nova ✦</h3>
+        <p class="c">RECEIPT OF SKILLS · NO. 0001</p>
+        <div class="grp"><b>EDUCATION</b>
+          <div class="ln"><span>B. Finance &amp; Risk Mgmt</span><span></span><span>✓</span></div>
+          <div class="ln"><span>Assumption University</span><span></span><span>TH</span></div>
+        </div>
+        <div class="grp"><b>EXPERIENCE</b>
+          <div class="ln"><span>[Role, company]</span><span></span><span>[yr]</span></div>
+          <div class="ln"><span>[Role, company]</span><span></span><span>[yr]</span></div>
+        </div>
+        <div class="grp"><b>LEADERSHIP</b>
+          <div class="ln"><span>[Club / initiative]</span><span></span><span>[yr]</span></div>
+        </div>
+        <div class="grp"><b>CERTIFICATIONS</b>
+          <div class="ln"><span>[Certification]</span><span></span><span>[yr]</span></div>
+        </div>
+        <div class="tot"><span>TOTAL</span><span>1 × NOVA</span></div>
+        <p class="c" style="margin-top:14px">thank you for visiting ♡</p>
+      </div>
+      <div class="cv-side">
+        <span class="eyebrow">CV / Résumé</span>
+        <h2>Everything on one receipt</h2>
+        <p>A quick, readable summary. Download the full PDF for the details.</p>
+        <div class="skills">
+          <span class="chip">Financial analysis</span><span class="chip">Valuation</span><span class="chip">Risk</span>
+          <span class="chip">Excel</span><span class="chip">Marketing</span><span class="chip">Content</span><span class="chip">E-commerce</span>
+        </div>
+        <div class="ctas"><button type="button" class="btn btn-pink" data-toast="Your CV PDF goes here once you send it ♡">Download CV (PDF)</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="eyebrow">Projects &amp; case studies</span><h2 style="margin-top:10px">Little case files</h2></div>
+        <div class="filters" role="group" aria-label="Filter projects">
+          <button type="button" data-f="all" aria-pressed="true">All</button>
+          <button type="button" data-f="finance" aria-pressed="false">Finance</button>
+          <button type="button" data-f="marketing" aria-pressed="false">Marketing</button>
+          <button type="button" data-f="commerce" aria-pressed="false">Commerce</button>
+        </div>
+      </div>
+      <div class="notes reveal" id="notes"></div>
+    </div>
+  </section>
+
+  <section id="social" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head"><div><span class="eyebrow">Social</span><h2 style="margin-top:10px">Find me around</h2></div></div>
+      <div class="stickers reveal">
+        <a class="sticker" href="#social" data-toast="Add your LinkedIn link here">in<small>LinkedIn</small></a>
+        <a class="sticker" href="#social" data-toast="Add your Instagram link here">◎<small>Instagram</small></a>
+        <a class="sticker" href="#social" data-toast="Add your TikTok link here">♪<small>TikTok</small></a>
+        <a class="sticker" href="#social" data-toast="Add your newsletter link here">✉<small>Substack</small></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="newsletter" style="padding-top:24px">
+    <div class="wrap">
+      <div class="letter reveal">
+        <div>
+          <span class="eyebrow" style="color:var(--ink)">Newsletter · every other Sunday</span>
+          <h2 style="margin-top:10px">The Margin Note<span>notes from the edge of the spreadsheet</span></h2>
+          <p>A short, friendly letter on what I'm learning about money, brands and ideas.</p>
+          <div class="topics"><span>✦ valuation reads</span><span>♡ brand teardowns</span><span>✎ money notes</span></div>
+        </div>
+        <form class="sub" id="subForm" novalidate>
+          <label for="email">Your email</label>
+          <div class="row">
+            <input id="email" type="email" placeholder="you@email.com" autocomplete="email">
+            <button class="btn" type="submit">Subscribe ♡</button>
+          </div>
+          <p class="msg" id="subMsg" role="status"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section id="posts">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="eyebrow">Posts &amp; writing</span><h2 style="margin-top:10px">Notes &amp; thoughts</h2></div>
+        <div class="filters" role="group" aria-label="Post categories">
+          <button type="button" data-p="all" aria-pressed="true">All</button>
+          <button type="button" data-p="Finance" aria-pressed="false">Finance</button>
+          <button type="button" data-p="Marketing" aria-pressed="false">Marketing</button>
+          <button type="button" data-p="Life" aria-pressed="false">Life</button>
+        </div>
+      </div>
+      <div class="posts" id="posts-list"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="contact" id="contact">
+  <div class="wrap">
+    <span class="eyebrow" style="color:var(--candy)">Contact</span>
+    <h2 style="margin-top:10px">Let's <em>balance</em><br>the books ♡</h2>
+    <p>Open to finance roles, collaborations and good conversations. Say hi.</p>
+    <div class="mail"><code id="mailText">[your.email@example.com]</code><button type="button" id="copyBtn">Copy email</button></div>
+    <div class="links"><a href="#contact">LinkedIn</a><a href="#contact">Instagram</a><a href="#cv">CV</a></div>
+    <div class="foot"><span>© 2026 Yaung Chi Mo Mo</span><span>✦ balanced &amp; closed</span></div>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="dTitle">
+  <button type="button" class="x" id="dClose" aria-label="Close case study">✕</button>
+  <span class="eyebrow" id="dTag"></span>
+  <h3 id="dTitle"></h3>
+  <dl>
+    <dt>Objective</dt><dd>[What question were you answering?]</dd>
+    <dt>My role</dt><dd>[What you did yourself]</dd>
+    <dt>Research &amp; method</dt><dd id="dMethod"></dd>
+    <dt>Findings</dt><dd>[Key insight, backed by your numbers]</dd>
+    <dt>Outcome</dt><dd>[What happened next, or what you'd recommend]</dd>
+  </dl>
+</aside>
+
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+(function(){
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  let tTimer;
+  function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(tTimer);tTimer=setTimeout(()=>el.hidden=true,2600);}
+  $$('[data-toast]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();toast(b.dataset.toast);}));
+
+  // hero mode toggle
+  const copy={
+    numbers:{h:'I read the numbers<br><em>behind the story.</em>',l:'Financial analysis, valuation and risk. I turn statements into decisions someone can act on.',b:'Numbers-heavy ✎'},
+    both:{h:'Half spreadsheet,<br><em>half sparkle.</em>',l:"I'm Yaung Chi Mo Mo. I studied Finance and Risk Management, and I love turning numbers into ideas people can actually use.",b:'Perfectly even ✦'},
+    sparkle:{h:'I write the story<br><em>behind the numbers.</em>',l:'Marketing, content and digital commerce, built on a real understanding of how businesses make money.',b:'Sparkle-heavy ♡'}
+  };
+  $$('.toggle button').forEach(btn=>btn.addEventListener('click',()=>{
+    const m=btn.dataset.mode;
+    $$('.toggle button').forEach(b=>b.setAttribute('aria-pressed',b===btn?'true':'false'));
+    $('#headline').innerHTML=copy[m].h; $('#lede').textContent=copy[m].l; $('#bal').textContent=copy[m].b;
+    $$('#colNum .item').forEach(i=>i.classList.toggle('dim',m==='sparkle'));
+    $$('#colSpark .item').forEach(i=>i.classList.toggle('dim',m==='numbers'));
+  }));
+
+  // projects
+  const projects=[
+    {id:'CF-01',cat:'finance',tag:'Valuation',title:'[Company] valuation',method:'DCF + comparable companies'},
+    {id:'CF-02',cat:'finance',tag:'Financial analysis',title:'[Company] ratio deep-dive',method:'Ratio analysis, 3-year trend'},
+    {id:'CF-03',cat:'marketing',tag:'Marketing',title:'[Brand] campaign teardown',method:'Audience + funnel audit'},
+    {id:'CF-04',cat:'commerce',tag:'Digital commerce',title:'[Shop] growth plan',method:'Unit economics + channel mix'},
+    {id:'CF-05',cat:'marketing',tag:'Content',title:'[Content series]',method:'Content calendar + performance review'}
+  ];
+  function renderProjects(f){
+    const list=projects.filter(p=>f==='all'||p.cat===f);
+    $('#notes').innerHTML=list.length?list.map(p=>`<button type="button" class="note" data-id="${p.id}"><span class="tag"><span>${p.tag}</span><span>${p.id}</span></span><h3>${p.title}</h3><span style="color:var(--cocoa);font-size:14px">${p.method}</span><span class="more">Open case file →</span></button>`).join(''):'<p class="empty">No projects here yet ♡</p>';
+    $$('.note').forEach(n=>n.addEventListener('click',()=>openDrawer(projects.find(p=>p.id===n.dataset.id))));
+  }
+  $$('[data-f]').forEach(b=>b.addEventListener('click',()=>{$$('[data-f]').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));renderProjects(b.dataset.f);}));
+  renderProjects('all');
+
+  let lastFocus;
+  function openDrawer(p){lastFocus=document.activeElement;$('#dTag').textContent=p.tag+' · '+p.id;$('#dTitle').textContent=p.title;$('#dMethod').textContent=p.method;$('#scrim').hidden=false;$('#drawer').hidden=false;$('#dClose').focus();}
+  function closeDrawer(){$('#scrim').hidden=true;$('#drawer').hidden=true;lastFocus&&lastFocus.focus();}
+  $('#dClose').addEventListener('click',closeDrawer);$('#scrim').addEventListener('click',closeDrawer);
+  $('#drawer').addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});
+
+  // posts
+  const posts=[
+    {cat:'Finance',title:'[What a DCF taught me about patience]',ex:'[Two-line preview of the post]'},
+    {cat:'Marketing',title:'[Why some brands feel expensive]',ex:'[Two-line preview of the post]'},
+    {cat:'Life',title:'[Learning finance and creativity at once]',ex:'[Two-line preview of the post]'}
+  ];
+  function renderPosts(c){
+    const list=posts.filter(p=>c==='all'||p.cat===c);
+    $('#posts-list').innerHTML=list.map(p=>`<article class="post"><div class="meta"><b>${p.cat}</b><span>Draft · [read time]</span></div><h3>${p.title}</h3><p>${p.ex}</p></article>`).join('');
+  }
+  $$('[data-p]').forEach(b=>b.addEventListener('click',()=>{$$('[data-p]').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));renderPosts(b.dataset.p);}));
+  renderPosts('all');
+
+  // newsletter
+  $('#subForm').addEventListener('submit',e=>{
+    e.preventDefault();const v=$('#email').value.trim();
+    $('#subMsg').textContent=/^\S+@\S+\.\S+$/.test(v)?'Yay! In the real site, you’d be on the list now ♡ (demo only)':'Please enter an email like you@email.com';
+  });
+
+  // copy email
+  $('#copyBtn').addEventListener('click',()=>{
+    const t=$('#mailText').textContent;
+    const fallback=()=>{const r=document.createRange();r.selectNodeContents($('#mailText'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Selected — copy it from here');};
+    try{navigator.clipboard.writeText(t).then(()=>toast('Email copied ♡'),fallback);}catch(err){fallback();}
+  });
+
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // hobby flip cards
+  $$('.flip').forEach(c=>c.addEventListener('click',()=>c.setAttribute('aria-pressed',c.getAttribute('aria-pressed')==='true'?'false':'true')));
+
+  // headline bounce when mode changes
+  $$('.toggle button').forEach(b=>b.addEventListener('click',()=>{const h=$('#headline');h.classList.remove('swap');void h.offsetWidth;h.classList.add('swap');}));
+
+  // hearts burst
+  function hearts(x,y,n){
+    if(calm)return;
+    for(let i=0;i<n;i++){
+      const s=document.createElement('span');s.className='heart';s.textContent=i%2?'♡':'✦';
+      const a=Math.random()*Math.PI*2,d=50+Math.random()*70;
+      s.style.left=x+'px';s.style.top=y+'px';s.style.setProperty('--dx',Math.cos(a)*d+'px');s.style.setProperty('--dy',Math.sin(a)*d+'px');
+      document.body.appendChild(s);setTimeout(()=>s.remove(),1000);
+    }
+  }
+  const star=$('.star');
+  star.addEventListener('click',e=>{star.classList.remove('spin');void star.getBoundingClientRect();star.classList.add('spin');hearts(e.clientX,e.clientY,12);toast('hi hi! ✦');});
+  $$('.btn-pink').forEach(b=>b.addEventListener('click',e=>hearts(e.clientX,e.clientY,6)));
+
+  // sparkle trail (mouse only)
+  if(!calm && matchMedia('(pointer: fine)').matches){
+    let last=0;
+    addEventListener('pointermove',e=>{
+      const now=performance.now(); if(now-last<70)return; last=now;
+      const s=document.createElement('span');s.className='trail';s.textContent='✦';
+      s.style.left=(e.clientX+6)+'px';s.style.top=(e.clientY+6)+'px';
+      document.body.appendChild(s);setTimeout(()=>s.remove(),800);
+    });
+  }
+
+  // photo preview (stays on this device)
+  $('#photoIn').addEventListener('change',e=>{
+    const files=[...e.target.files].filter(f=>f.type.startsWith('image/'));
+    if(!files.length)return;
+    const slots=[...$$('.ph[data-slot]'),...$$('#roll .ph')];
+    files.forEach((f,i)=>{
+      const slot=slots[i % slots.length]; const url=URL.createObjectURL(f);
+      slot.innerHTML=''; const img=new Image(); img.alt='Photo of Nova'; img.src=url; slot.appendChild(img);
+    });
+    toast(files.length+' photo'+(files.length>1?'s':'')+' added to the preview ♡');
+  });
+})();
+</script>
+</body>
+</html>
